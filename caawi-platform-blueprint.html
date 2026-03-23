@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caawi Platform Blueprint</title>
+<style>
+  :root {
+    --plum: #5B2C6F;
+    --violet: #7D3C98;
+    --gold: #D4AC0D;
+    --teal: #1ABC9C;
+    --teal-dark: #148F77;
+    --cream: #FDF6EC;
+    --slate: #2C3E50;
+    --light-gray: #F4F6F7;
+    --mid-gray: #BDC3C7;
+    --white: #FFFFFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--light-gray);
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, var(--plum) 0%, var(--violet) 100%);
+    color: var(--white);
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.25rem;
+  }
+  .header .gold-accent { color: var(--gold); }
+  .header p { opacity: 0.85; font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
+
+  /* ── Tab Navigation ── */
+  .tab-nav {
+    display: flex;
+    background: var(--white);
+    border-bottom: 2px solid var(--mid-gray);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .tab-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 0.85rem 1rem;
+    border: none;
+    background: transparent;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { background: var(--light-gray); }
+  .tab-btn.active {
+    color: var(--plum);
+    border-bottom-color: var(--gold);
+    background: var(--cream);
+  }
+  .tab-btn .step-num {
+    display: inline-block;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--mid-gray);
+    color: var(--white);
+    font-size: 0.7rem;
+    line-height: 22px;
+    text-align: center;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .tab-btn.active .step-num { background: var(--plum); }
+
+  /* ── Tab Content ── */
+  .tab-content { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  /* ── Section Styles ── */
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--plum);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--gold);
+  }
+  .section-subtitle {
+    font-size: 0.9rem;
+    color: #7F8C8D;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--teal);
+  }
+  .card.plum-border { border-left-color: var(--plum); }
+  .card.gold-border { border-left-color: var(--gold); }
+  .card.violet-border { border-left-color: var(--violet); }
+  .card h3 {
+    font-size: 1.05rem;
+    color: var(--plum);
+    margin-bottom: 0.5rem;
+  }
+  .card p, .card li { font-size: 0.9rem; line-height: 1.65; }
+  .card ul { padding-left: 1.25rem; margin-top: 0.5rem; }
+  .card li { margin-bottom: 0.35rem; }
+
+  /* ── Intake Table ── */
+  .intake-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+  .intake-table th {
+    background: var(--plum);
+    color: var(--white);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .intake-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #ECF0F1;
+    vertical-align: top;
+  }
+  .intake-table tr:nth-child(even) { background: var(--cream); }
+  .intake-table .q-num {
+    display: inline-block;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: var(--white);
+    text-align: center;
+    line-height: 26px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-right: 6px;
+  }
+
+  /* ── Flowchart ── */
+  .flow-container { overflow-x: auto; padding: 1rem 0; }
+  .flow-svg { max-width: 100%; height: auto; }
+
+  /* ── Tag / Badge ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin: 2px 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .tag-teal { background: #D5F5E3; color: #0E6655; }
+  .tag-plum { background: #E8DAEF; color: var(--plum); }
+  .tag-gold { background: #FEF9E7; color: #9A7D0A; }
+  .tag-red  { background: #FDEDEC; color: #922B21; }
+
+  /* ── UX Brief Grid ── */
+  .ux-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+    margin: 1rem 0;
+  }
+  .ux-item {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--teal);
+  }
+  .ux-item h4 {
+    font-size: 0.95rem;
+    color: var(--plum);
+    margin-bottom: 0.5rem;
+  }
+  .ux-item .rule {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--cream);
+    border-radius: 6px;
+    margin: 0.4rem 0;
+    border-left: 3px solid var(--gold);
+  }
+
+  /* ── Landing Page Preview ── */
+  .landing-preview {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid #E5E8EB;
+  }
+  .lp-hero {
+    background: linear-gradient(135deg, var(--plum) 0%, var(--violet) 60%, var(--teal) 100%);
+    color: var(--white);
+    padding: 3.5rem 2rem;
+    text-align: center;
+  }
+  .lp-hero h2 { font-size: 2rem; margin-bottom: 0.75rem; font-weight: 700; }
+  .lp-hero .lp-sub { font-size: 1.1rem; opacity: 0.9; max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.5; }
+  .lp-cta {
+    display: inline-block;
+    padding: 0.85rem 2.5rem;
+    background: var(--gold);
+    color: var(--plum);
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: transform 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .lp-cta:hover { transform: scale(1.03); }
+  .lp-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 2.5rem 2rem;
+  }
+  .lp-feature {
+    text-align: center;
+    padding: 1.25rem;
+  }
+  .lp-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    font-size: 1.5rem;
+  }
+  .lp-feature h4 { font-size: 0.95rem; color: var(--plum); margin-bottom: 0.35rem; }
+  .lp-feature p { font-size: 0.82rem; color: #7F8C8D; line-height: 1.5; }
+  .lp-trust {
+    background: var(--cream);
+    padding: 2rem;
+    text-align: center;
+  }
+  .lp-trust h3 { font-size: 1.1rem; color: var(--plum); margin-bottom: 0.75rem; }
+  .lp-trust p { font-size: 0.85rem; color: #7F8C8D; max-width: 500px; margin: 0 auto; }
+  .lp-footer {
+    background: var(--slate);
+    color: var(--mid-gray);
+    padding: 1.25rem 2rem;
+    text-align: center;
+    font-size: 0.78rem;
+  }
+
+  /* ── Decision Logic Highlight ── */
+  .logic-box {
+    background: #F8F4FC;
+    border: 1px solid #D7BDE2;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+    font-size: 0.85rem;
+  }
+  .logic-box strong { color: var(--plum); }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 1.6rem; }
+    .tab-content { padding: 1.25rem; }
+    .ux-grid { grid-template-columns: 1fr; }
+    .lp-features { grid-template-columns: 1fr; }
+    .intake-table { font-size: 0.78rem; }
+    .intake-table th, .intake-table td { padding: 0.5rem 0.6rem; }
+  }
+
+  /* ── Print ── */
+  @media print {
+    .tab-nav { display: none; }
+    .tab-content { display: block !important; page-break-before: always; }
+    .tab-content:first-of-type { page-break-before: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ HEADER ════════════════════════════════════════ -->
+<div class="header">
+  <h1>C<span class="gold-accent">aa</span>wi Platform Blueprint</h1>
+  <p>Research Synthesis &rarr; Intake Logic &rarr; User Paths &rarr; UX Brief &rarr; Landing Page</p>
+</div>
+
+<!-- ════════════════════════════════════════ TABS ════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('research')"><span class="step-num">R</span>Research</button>
+  <button class="tab-btn" onclick="showTab('intake')"><span class="step-num">1</span>Intake Logic</button>
+  <button class="tab-btn" onclick="showTab('paths')"><span class="step-num">2</span>User Paths</button>
+  <button class="tab-btn" onclick="showTab('ux')"><span class="step-num">3</span>UX Brief</button>
+  <button class="tab-btn" onclick="showTab('landing')"><span class="step-num">4</span>Landing Page</button>
+</nav>
+
+<!-- ════════════════════════════════════════ TAB: RESEARCH ════════════════════════════════════════ -->
+<div id="research" class="tab-content active">
+  <h2 class="section-title">Research Extrapolation: Three Foundational Areas</h2>
+  <p class="section-subtitle">Synthesis of the User Literacy research folder &mdash; what the evidence means for Caawi specifically</p>
+
+  <!-- Area 1 -->
+  <div class="card plum-border">
+    <h3>Area 1: Low-Literacy Onboarding Patterns</h3>
+    <p><strong>What the research establishes:</strong> Onboarding for low-literate users works when it reduces dependence on text, anchors tasks in familiar context, and supports non-written and socially assisted progression. Eight core patterns emerge: minimized text, recognition over recall, multimodal comprehension, fast first success, contextual relevance, recovery-oriented error design, socially assisted onboarding, and immediate reversible language choice.</p>
+    <div class="logic-box">
+      <strong>Extrapolation to Caawi:</strong> Caawi's intake cannot function as a traditional form. Each question must be a standalone screen with audio narration in Somali, a single tap-target answer, and a visible "play again" option. Account creation should happen <em>after</em> the user completes one meaningful action (e.g., locating a service category), not before. The "try first, configure later" principle directly supports Caawi's community-facing free tier design &mdash; the value proposition must be felt before the username + newsletter opt-in gate.
+    </div>
+    <ul>
+      <li><strong>One action per screen</strong> &mdash; Caawi's intake should never show more than one question at a time</li>
+      <li><strong>Audio-first comprehension</strong> &mdash; every prompt needs a tap-to-hear Somali narration; text is supplementary, not primary</li>
+      <li><strong>Helper-compatible flow</strong> &mdash; screens should make sense to a caseworker or family member assisting the user, with bilingual labels on high-risk screens</li>
+      <li><strong>Recovery, not prevention</strong> &mdash; plain-language error messages with one obvious corrective action; no dead-end states</li>
+    </ul>
+  </div>
+
+  <!-- Area 2 -->
+  <div class="card gold-border">
+    <h3>Area 2: Refugee &amp; Immigrant Technology Adoption</h3>
+    <p><strong>What the research establishes:</strong> Smartphones are treated as settlement and survival infrastructure. Primary use clusters around messaging, family contact, social media, translation, navigation, and video calling. Users arrive already familiar with chat-like interactions, contact lists, voice notes, photos, maps, and social feeds. However, low reading proficiency &mdash; not device ownership &mdash; is the primary predictor of app non-participation. Digital brokering (younger or more fluent family members assisting) is a structural feature of how this population uses technology.</p>
+    <div class="logic-box">
+      <strong>Extrapolation to Caawi:</strong> Caawi can reliably assume users know how to tap, scroll, send voice notes, and navigate social feeds. What it <em>cannot</em> assume is that users can parse form-heavy flows, read dense menus, interpret English error messages, or complete multi-step account setup without assistance. This means Caawi's interface should feel closer to a WhatsApp conversation than a government services portal. Navigation should mirror chat + icons + stepwise flows. The digital brokering insight directly informs Caawi's "show this to a helper" feature &mdash; this is not an accessibility add-on, it is a primary use pattern.
+    </div>
+    <ul>
+      <li><strong>Design conventions to leverage:</strong> Chat-like interaction, clear icons for message/call/location/translate/help, stepwise navigation, share/send/save flows</li>
+      <li><strong>Design conventions to avoid:</strong> Dense multi-field forms, hidden menu structures, text-only labels without icon support, abstract navigation metaphors</li>
+      <li><strong>Critical gap:</strong> No post-2020 U.S.-specific data on exact app rankings &mdash; Caawi's own user research will need to fill this</li>
+    </ul>
+  </div>
+
+  <!-- Area 3 -->
+  <div class="card">
+    <h3>Area 3: Somali-Specific Language &amp; Literacy Landscape</h3>
+    <p><strong>What the research establishes:</strong> Somali has a vigorous oral tradition with a standardized writing system dating only to 1972. Spoken Somali fluency and written Somali fluency are not interchangeable. Somali communicative culture is highly compatible with audio-first, social-mobile interaction (WhatsApp adaptation for oral traditions and kinship coordination). The population is heterogeneous: some are written-Somali capable, some are spoken-Somali preferred / text-limited, and some need assisted or bilingual navigation.</p>
+    <div class="logic-box">
+      <strong>Extrapolation to Caawi:</strong> The intake question should never be "Do you know Somali?" but rather "How do you prefer to get information?" This three-lane model (written-Somali capable / spoken-Somali preferred / assisted bilingual) directly shapes Caawi's personalization logic. A user who selects the audio icon on the first screen should be routed to a voice-narrated, icon-heavy experience. A user who selects written Somali gets concise text screens. A user who selects "I have a helper" gets bilingual labels and shareable instructions. This is the foundation of the intake decision tree below.
+    </div>
+    <ul>
+      <li><strong>Three-lane user model</strong> &mdash; written-Somali / spoken-Somali / assisted-bilingual &mdash; replaces any binary literacy assumption</li>
+      <li><strong>Audio is not a fallback</strong> &mdash; for a substantial share of users, spoken Somali is the <em>primary</em> processing mode, not secondary</li>
+      <li><strong>Safest design posture:</strong> Treat spoken Somali and audio-mediated interaction as first-class pathways from screen one</li>
+      <li><strong>Evidence gap:</strong> No defensible U.S.-specific percentage split between readers vs. audio-reliant users &mdash; Caawi's CIT research will generate this</li>
+    </ul>
+  </div>
+
+  <!-- Cross-cutting -->
+  <div class="card violet-border">
+    <h3>Cross-Cutting Implication: What These Three Areas Mean Together</h3>
+    <p>When you layer all three areas, one design principle emerges that governs everything downstream:</p>
+    <div class="logic-box">
+      <strong>Caawi's onboarding must simultaneously solve for three overlapping barriers:</strong> (1) low text-processing ability in <em>any</em> language, (2) unfamiliarity with form-heavy digital flows despite smartphone competence, and (3) heterogeneous literacy within the Somali-speaking population itself. No single-mode interface addresses all three. The intake form is the mechanism that sorts users into the right experience path &mdash; and it must do so without requiring the very literacy skills it is trying to assess.
+    </div>
+    <p style="margin-top: 0.75rem;">This is why the intake form uses <strong>behavioral signals</strong> (which icon did they tap? did they play the audio?) rather than self-reported literacy levels. The questions below are designed to route users without asking them to diagnose themselves.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ TAB: INTAKE LOGIC ════════════════════════════════════════ -->
+<div id="intake" class="tab-content">
+  <h2 class="section-title">Step 1: Intake Form Questions &mdash; Decision Logic Document</h2>
+  <p class="section-subtitle">6 questions. Each one runs on a single screen. Audio narration plays automatically in Somali. Answers route users into one of three experience paths.</p>
+
+  <table class="intake-table">
+    <thead>
+      <tr>
+        <th style="width:5%">#</th>
+        <th style="width:22%">Question (screen label)</th>
+        <th style="width:28%">Answer Options</th>
+        <th style="width:25%">What Each Answer Tells You</th>
+        <th style="width:20%">Routing Signal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Q1 -->
+      <tr>
+        <td><span class="q-num">1</span></td>
+        <td>
+          <strong>Language selection</strong><br>
+          <em>Screen shows two large buttons with flag-style icons. Audio auto-plays in Somali, then English.</em><br>
+          "Luuqaddaada dooro / Choose your language"
+        </td>
+        <td>
+          <span class="tag tag-teal">Soomaali</span> (icon: Somali flag)<br>
+          <span class="tag tag-plum">English</span> (icon: US flag)<br>
+          <span class="tag tag-gold">&#128264; Play audio first</span> (speaker icon, no text)
+        </td>
+        <td>
+          <strong>Soomaali:</strong> User is Somali-language dominant. Proceed in Somali.<br>
+          <strong>English:</strong> User can navigate English. Simpler path; fewer audio prompts needed.<br>
+          <strong>Audio first:</strong> User is uncertain or low-text-comfort. Strong signal for audio-heavy path.
+        </td>
+        <td>
+          <span class="tag tag-teal">Soomaali</span> &rarr; Somali UI track<br>
+          <span class="tag tag-plum">English</span> &rarr; English UI track<br>
+          <span class="tag tag-gold">Audio</span> &rarr; Audio-first flag ON
+        </td>
+      </tr>
+      <!-- Q2 -->
+      <tr>
+        <td><span class="q-num">2</span></td>
+        <td>
+          <strong>What brings you here?</strong><br>
+          <em>4 large icon-buttons, each with short label + audio tap.</em><br>
+          "Maxaad raadinaysaa? / What are you looking for?"
+        </td>
+        <td>
+          <span class="tag tag-teal">&#128188; Shaqo (Jobs)</span><br>
+          <span class="tag tag-plum">&#127968; Guri (Housing)</span><br>
+          <span class="tag tag-gold">&#9877; Caafimaad (Health)</span><br>
+          <span class="tag tag-red">&#128221; Wax kale (Something else)</span>
+        </td>
+        <td>
+          Identifies the user's <strong>primary need</strong>. Routes them to the service category they will see first after onboarding. "Something else" opens a secondary menu (legal aid, education, transportation, community).
+        </td>
+        <td>
+          Sets <strong>MVP service priority</strong>. First content the user sees post-intake matches this selection. This is also the "first meaningful success" &mdash; they see relevant resources immediately.
+        </td>
+      </tr>
+      <!-- Q3 -->
+      <tr>
+        <td><span class="q-num">3</span></td>
+        <td>
+          <strong>How do you prefer to get information?</strong><br>
+          <em>3 icon-buttons. Audio plays each option aloud.</em><br>
+          "Sidee u jeceshahay inaad macluumaad u hesho?"
+        </td>
+        <td>
+          <span class="tag tag-teal">&#128264; Dhageysi (Listen)</span> &mdash; speaker icon<br>
+          <span class="tag tag-plum">&#128214; Akhris (Read)</span> &mdash; document icon<br>
+          <span class="tag tag-gold">&#129309; Caawin (With help)</span> &mdash; two-person icon
+        </td>
+        <td>
+          <strong>Listen:</strong> User prefers audio narration. Map to spoken-Somali path.<br>
+          <strong>Read:</strong> User is comfortable with written text. Map to text-capable path.<br>
+          <strong>With help:</strong> User has or needs a helper. Map to assisted-bilingual path. Enables "show this to a helper" mode.
+        </td>
+        <td>
+          This is the <strong>core routing question</strong>. Determines which of the three experience lanes the user enters:<br>
+          <span class="tag tag-teal">Audio Lane</span>
+          <span class="tag tag-plum">Text Lane</span>
+          <span class="tag tag-gold">Helper Lane</span>
+        </td>
+      </tr>
+      <!-- Q4 -->
+      <tr>
+        <td><span class="q-num">4</span></td>
+        <td>
+          <strong>Where are you?</strong><br>
+          <em>Large text field with mic icon for voice input, or dropdown of MN cities.</em><br>
+          "Xaggee ku nooshahay?"
+        </td>
+        <td>
+          <span class="tag tag-teal">&#127384; Minneapolis</span><br>
+          <span class="tag tag-plum">&#127384; St. Paul</span><br>
+          <span class="tag tag-gold">&#127384; Other MN city</span> (dropdown)<br>
+          <span class="tag tag-red">&#128226; Say it</span> (voice input)
+        </td>
+        <td>
+          Enables <strong>location-relevant service matching</strong>. Users in Minneapolis see Cedar-Riverside area services; St. Paul users see East Side services. Voice input option reinforces audio-first design and captures users who can't type city names.
+        </td>
+        <td>
+          Filters the service directory to <strong>geographically relevant</strong> results. Also signals whether user can type (selected from list) vs. needs voice input (tapped mic).
+        </td>
+      </tr>
+      <!-- Q5 -->
+      <tr>
+        <td><span class="q-num">5</span></td>
+        <td>
+          <strong>How long have you been in the U.S.?</strong><br>
+          <em>3 icon-buttons with simple time illustrations.</em><br>
+          "Muddo intee le'eg ayaad Maraykanka joogtay?"
+        </td>
+        <td>
+          <span class="tag tag-teal">&#128304; &lt; 1 sano (year)</span><br>
+          <span class="tag tag-plum">&#128304; 1&ndash;5 sano</span><br>
+          <span class="tag tag-gold">&#128304; 5+ sano</span>
+        </td>
+        <td>
+          <strong>&lt; 1 year:</strong> Likely needs orientation-level support (what is 211? how does housing work?). Higher priority for navigation and legal aid.<br>
+          <strong>1-5 years:</strong> May know basic systems but need specific help (job advancement, healthcare access).<br>
+          <strong>5+ years:</strong> Likely more system-savvy; may need specialized services (citizenship, education pathways, entrepreneurship).
+        </td>
+        <td>
+          Adjusts <strong>content complexity and resource type</strong>. Newer arrivals get more explanatory content; established residents get direct resource links.
+        </td>
+      </tr>
+      <!-- Q6 -->
+      <tr>
+        <td><span class="q-num">6</span></td>
+        <td>
+          <strong>Do you want Caawi to remember you?</strong><br>
+          <em>2 large buttons. Friendly illustration of a bookmark.</em><br>
+          "Ma rabtaa in Caawi ku xasuusto?"
+        </td>
+        <td>
+          <span class="tag tag-teal">&#10003; Haa (Yes)</span> &mdash; leads to username + newsletter opt-in<br>
+          <span class="tag tag-plum">Hadda ma rabo (Not now)</span> &mdash; continues as guest
+        </td>
+        <td>
+          <strong>Yes:</strong> User is ready to create an account. They've already experienced value (from Q2 service match). This is the "configure later" principle in action.<br>
+          <strong>Not now:</strong> User can still access content. Account prompt returns after their second session. No value is gated behind sign-up.
+        </td>
+        <td>
+          Converts to <strong>registered user</strong> (owned audience) or <strong>guest session</strong>. The deferred opt-in respects low-trust users while still building the user base.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card gold-border" style="margin-top: 1.5rem;">
+    <h3>Decision Logic Summary</h3>
+    <p>The six questions produce a <strong>composite user profile</strong> with four routing variables:</p>
+    <ul>
+      <li><strong>Language:</strong> Somali | English (from Q1)</li>
+      <li><strong>Experience Lane:</strong> Audio | Text | Helper (from Q3, reinforced by Q1 audio-first signal)</li>
+      <li><strong>Service Priority:</strong> Jobs | Housing | Health | Other (from Q2)</li>
+      <li><strong>Context Layer:</strong> New arrival | Settling | Established (from Q5, modified by Q4 location)</li>
+    </ul>
+    <p style="margin-top: 0.5rem;">These four variables combine to produce the <strong>user's first screen after intake</strong> &mdash; which is always a curated list of 3&ndash;5 resources matching their need, in their preferred mode, filtered to their location. That is the "first meaningful success" the onboarding research requires.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ TAB: USER PATHS ════════════════════════════════════════ -->
+<div id="paths" class="tab-content">
+  <h2 class="section-title">Step 2: User Path Map &mdash; Response Flowchart</h2>
+  <p class="section-subtitle">Three lanes based on Q3 response. Each lane shows what the user sees after completing intake.</p>
+
+  <div class="flow-container">
+    <svg class="flow-svg" viewBox="0 0 1050 820" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+      <!-- Background -->
+      <rect width="1050" height="820" fill="#F4F6F7" rx="12"/>
+
+      <!-- Title -->
+      <text x="525" y="35" text-anchor="middle" font-size="18" font-weight="700" fill="#5B2C6F">Caawi User Path Map</text>
+      <text x="525" y="55" text-anchor="middle" font-size="11" fill="#7F8C8D">Based on Q3: "How do you prefer to get information?"</text>
+
+      <!-- ── START NODE ── -->
+      <rect x="420" y="75" width="210" height="44" rx="22" fill="#5B2C6F"/>
+      <text x="525" y="102" text-anchor="middle" font-size="13" font-weight="600" fill="#FFF">User completes Q1&ndash;Q2</text>
+
+      <!-- Arrow down to Q3 -->
+      <line x1="525" y1="119" x2="525" y2="145" stroke="#5B2C6F" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Q3 Diamond -->
+      <polygon points="525,145 620,190 525,235 430,190" fill="#D4AC0D" stroke="#9A7D0A" stroke-width="1.5"/>
+      <text x="525" y="187" text-anchor="middle" font-size="11" font-weight="700" fill="#5B2C6F">Q3: How do</text>
+      <text x="525" y="200" text-anchor="middle" font-size="11" font-weight="700" fill="#5B2C6F">you prefer info?</text>
+
+      <!-- ── THREE BRANCHES ── -->
+      <!-- Left: Audio Lane -->
+      <line x1="430" y1="190" x2="175" y2="190" stroke="#1ABC9C" stroke-width="2.5"/>
+      <line x1="175" y1="190" x2="175" y2="270" stroke="#1ABC9C" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+      <text x="300" y="182" text-anchor="middle" font-size="11" font-weight="600" fill="#1ABC9C">Dhageysi (Listen)</text>
+
+      <!-- Center: Text Lane -->
+      <line x1="525" y1="235" x2="525" y2="270" stroke="#5B2C6F" stroke-width="2.5" marker-end="url(#arrow-plum)"/>
+      <text x="540" y="258" font-size="11" font-weight="600" fill="#5B2C6F">Akhris (Read)</text>
+
+      <!-- Right: Helper Lane -->
+      <line x1="620" y1="190" x2="875" y2="190" stroke="#D4AC0D" stroke-width="2.5"/>
+      <line x1="875" y1="190" x2="875" y2="270" stroke="#D4AC0D" stroke-width="2.5" marker-end="url(#arrow-gold)"/>
+      <text x="748" y="182" text-anchor="middle" font-size="11" font-weight="600" fill="#9A7D0A">Caawin (With help)</text>
+
+      <!-- ════ AUDIO LANE ════ -->
+      <rect x="55" y="270" width="240" height="38" rx="8" fill="#1ABC9C"/>
+      <text x="175" y="294" text-anchor="middle" font-size="12" font-weight="700" fill="#FFF">AUDIO LANE</text>
+
+      <!-- Audio Step 1 -->
+      <rect x="55" y="318" width="240" height="56" rx="8" fill="#FFF" stroke="#1ABC9C" stroke-width="1.5"/>
+      <text x="175" y="339" text-anchor="middle" font-size="10" font-weight="600" fill="#1ABC9C">Q4 &amp; Q5 (audio-narrated)</text>
+      <text x="175" y="355" text-anchor="middle" font-size="9" fill="#2C3E50">Voice input enabled for location</text>
+      <text x="175" y="367" text-anchor="middle" font-size="9" fill="#2C3E50">Tap icons for time-in-US</text>
+
+      <!-- Audio Step 2 -->
+      <rect x="55" y="384" width="240" height="56" rx="8" fill="#FFF" stroke="#1ABC9C" stroke-width="1.5"/>
+      <text x="175" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#1ABC9C">First Success Screen</text>
+      <text x="175" y="421" text-anchor="middle" font-size="9" fill="#2C3E50">3&ndash;5 resources with audio labels</text>
+      <text x="175" y="433" text-anchor="middle" font-size="9" fill="#2C3E50">Large icons + play button per item</text>
+
+      <!-- Audio Step 3 -->
+      <rect x="55" y="450" width="240" height="56" rx="8" fill="#FFF" stroke="#1ABC9C" stroke-width="1.5"/>
+      <text x="175" y="471" text-anchor="middle" font-size="10" font-weight="600" fill="#1ABC9C">Resource Detail (Audio)</text>
+      <text x="175" y="487" text-anchor="middle" font-size="9" fill="#2C3E50">Auto-narrated description</text>
+      <text x="175" y="499" text-anchor="middle" font-size="9" fill="#2C3E50">One-tap call / one-tap map</text>
+
+      <!-- Audio Step 4 -->
+      <rect x="55" y="516" width="240" height="48" rx="8" fill="#D5F5E3" stroke="#1ABC9C" stroke-width="1.5"/>
+      <text x="175" y="537" text-anchor="middle" font-size="10" font-weight="600" fill="#0E6655">Q6: Remember me?</text>
+      <text x="175" y="553" text-anchor="middle" font-size="9" fill="#2C3E50">Audio prompt + two big buttons</text>
+
+      <!-- Connecting lines for audio -->
+      <line x1="175" y1="374" x2="175" y2="384" stroke="#1ABC9C" stroke-width="1.5"/>
+      <line x1="175" y1="440" x2="175" y2="450" stroke="#1ABC9C" stroke-width="1.5"/>
+      <line x1="175" y1="506" x2="175" y2="516" stroke="#1ABC9C" stroke-width="1.5"/>
+
+      <!-- Audio lane features -->
+      <rect x="55" y="580" width="240" height="90" rx="8" fill="#E8F8F5" stroke="#1ABC9C" stroke-width="1"/>
+      <text x="175" y="600" text-anchor="middle" font-size="10" font-weight="600" fill="#0E6655">Lane Features</text>
+      <text x="75" y="618" font-size="9" fill="#2C3E50">&#9679; Auto-play narration every screen</text>
+      <text x="75" y="633" font-size="9" fill="#2C3E50">&#9679; Minimal text (icon + short label)</text>
+      <text x="75" y="648" font-size="9" fill="#2C3E50">&#9679; Voice input where possible</text>
+      <text x="75" y="663" font-size="9" fill="#2C3E50">&#9679; Audio error recovery messages</text>
+
+      <!-- ════ TEXT LANE ════ -->
+      <rect x="405" y="270" width="240" height="38" rx="8" fill="#5B2C6F"/>
+      <text x="525" y="294" text-anchor="middle" font-size="12" font-weight="700" fill="#FFF">TEXT LANE</text>
+
+      <rect x="405" y="318" width="240" height="56" rx="8" fill="#FFF" stroke="#5B2C6F" stroke-width="1.5"/>
+      <text x="525" y="339" text-anchor="middle" font-size="10" font-weight="600" fill="#5B2C6F">Q4 &amp; Q5 (written Somali)</text>
+      <text x="525" y="355" text-anchor="middle" font-size="9" fill="#2C3E50">Dropdown selection for location</text>
+      <text x="525" y="367" text-anchor="middle" font-size="9" fill="#2C3E50">Tap options for time-in-US</text>
+
+      <rect x="405" y="384" width="240" height="56" rx="8" fill="#FFF" stroke="#5B2C6F" stroke-width="1.5"/>
+      <text x="525" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#5B2C6F">First Success Screen</text>
+      <text x="525" y="421" text-anchor="middle" font-size="9" fill="#2C3E50">3&ndash;5 resources with Somali text</text>
+      <text x="525" y="433" text-anchor="middle" font-size="9" fill="#2C3E50">Compact cards, skimmable layout</text>
+
+      <rect x="405" y="450" width="240" height="56" rx="8" fill="#FFF" stroke="#5B2C6F" stroke-width="1.5"/>
+      <text x="525" y="471" text-anchor="middle" font-size="10" font-weight="600" fill="#5B2C6F">Resource Detail (Text)</text>
+      <text x="525" y="487" text-anchor="middle" font-size="9" fill="#2C3E50">Concise Somali description</text>
+      <text x="525" y="499" text-anchor="middle" font-size="9" fill="#2C3E50">Call / map buttons + summary</text>
+
+      <rect x="405" y="516" width="240" height="48" rx="8" fill="#E8DAEF" stroke="#5B2C6F" stroke-width="1.5"/>
+      <text x="525" y="537" text-anchor="middle" font-size="10" font-weight="600" fill="#5B2C6F">Q6: Remember me?</text>
+      <text x="525" y="553" text-anchor="middle" font-size="9" fill="#2C3E50">Written prompt + two buttons</text>
+
+      <line x1="525" y1="374" x2="525" y2="384" stroke="#5B2C6F" stroke-width="1.5"/>
+      <line x1="525" y1="440" x2="525" y2="450" stroke="#5B2C6F" stroke-width="1.5"/>
+      <line x1="525" y1="506" x2="525" y2="516" stroke="#5B2C6F" stroke-width="1.5"/>
+
+      <rect x="405" y="580" width="240" height="90" rx="8" fill="#F8F4FC" stroke="#5B2C6F" stroke-width="1"/>
+      <text x="525" y="600" text-anchor="middle" font-size="10" font-weight="600" fill="#5B2C6F">Lane Features</text>
+      <text x="425" y="618" font-size="9" fill="#2C3E50">&#9679; Written Somali UI at 4th-grade level</text>
+      <text x="425" y="633" font-size="9" fill="#2C3E50">&#9679; Audio available but not auto-play</text>
+      <text x="425" y="648" font-size="9" fill="#2C3E50">&#9679; More compact layout (multi-item)</text>
+      <text x="425" y="663" font-size="9" fill="#2C3E50">&#9679; Written error messages + retry</text>
+
+      <!-- ════ HELPER LANE ════ -->
+      <rect x="755" y="270" width="240" height="38" rx="8" fill="#D4AC0D"/>
+      <text x="875" y="294" text-anchor="middle" font-size="12" font-weight="700" fill="#5B2C6F">HELPER LANE</text>
+
+      <rect x="755" y="318" width="240" height="56" rx="8" fill="#FFF" stroke="#D4AC0D" stroke-width="1.5"/>
+      <text x="875" y="339" text-anchor="middle" font-size="10" font-weight="600" fill="#9A7D0A">Q4 &amp; Q5 (bilingual + audio)</text>
+      <text x="875" y="355" text-anchor="middle" font-size="9" fill="#2C3E50">Somali + English labels visible</text>
+      <text x="875" y="367" text-anchor="middle" font-size="9" fill="#2C3E50">"Helper instructions" banner on top</text>
+
+      <rect x="755" y="384" width="240" height="56" rx="8" fill="#FFF" stroke="#D4AC0D" stroke-width="1.5"/>
+      <text x="875" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#9A7D0A">First Success Screen</text>
+      <text x="875" y="421" text-anchor="middle" font-size="9" fill="#2C3E50">3&ndash;5 resources, bilingual cards</text>
+      <text x="875" y="433" text-anchor="middle" font-size="9" fill="#2C3E50">Shareable link per resource</text>
+
+      <rect x="755" y="450" width="240" height="56" rx="8" fill="#FFF" stroke="#D4AC0D" stroke-width="1.5"/>
+      <text x="875" y="471" text-anchor="middle" font-size="10" font-weight="600" fill="#9A7D0A">Resource Detail (Bilingual)</text>
+      <text x="875" y="487" text-anchor="middle" font-size="9" fill="#2C3E50">Side-by-side Somali / English</text>
+      <text x="875" y="499" text-anchor="middle" font-size="9" fill="#2C3E50">"Share with helper" button</text>
+
+      <rect x="755" y="516" width="240" height="48" rx="8" fill="#FEF9E7" stroke="#D4AC0D" stroke-width="1.5"/>
+      <text x="875" y="537" text-anchor="middle" font-size="10" font-weight="600" fill="#9A7D0A">Q6: Remember me?</text>
+      <text x="875" y="553" text-anchor="middle" font-size="9" fill="#2C3E50">Bilingual prompt + helper note</text>
+
+      <line x1="875" y1="374" x2="875" y2="384" stroke="#D4AC0D" stroke-width="1.5"/>
+      <line x1="875" y1="440" x2="875" y2="450" stroke="#D4AC0D" stroke-width="1.5"/>
+      <line x1="875" y1="506" x2="875" y2="516" stroke="#D4AC0D" stroke-width="1.5"/>
+
+      <rect x="755" y="580" width="240" height="90" rx="8" fill="#FEF9E7" stroke="#D4AC0D" stroke-width="1"/>
+      <text x="875" y="600" text-anchor="middle" font-size="10" font-weight="600" fill="#9A7D0A">Lane Features</text>
+      <text x="775" y="618" font-size="9" fill="#2C3E50">&#9679; Bilingual labels on every screen</text>
+      <text x="775" y="633" font-size="9" fill="#2C3E50">&#9679; "Show to helper" persistent banner</text>
+      <text x="775" y="648" font-size="9" fill="#2C3E50">&#9679; Copy/share each screen as link</text>
+      <text x="775" y="663" font-size="9" fill="#2C3E50">&#9679; Audio + text + visual redundancy</text>
+
+      <!-- ── CONVERGENCE ── -->
+      <line x1="175" y1="670" x2="175" y2="720" stroke="#1ABC9C" stroke-width="1.5"/>
+      <line x1="525" y1="670" x2="525" y2="720" stroke="#5B2C6F" stroke-width="1.5"/>
+      <line x1="875" y1="670" x2="875" y2="720" stroke="#D4AC0D" stroke-width="1.5"/>
+      <line x1="175" y1="720" x2="875" y2="720" stroke="#7F8C8D" stroke-width="1.5"/>
+      <line x1="525" y1="720" x2="525" y2="745" stroke="#7F8C8D" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <rect x="370" y="745" width="310" height="50" rx="10" fill="#5B2C6F"/>
+      <text x="525" y="770" text-anchor="middle" font-size="12" font-weight="600" fill="#FFF">All lanes converge: Dashboard</text>
+      <text x="525" y="786" text-anchor="middle" font-size="9" fill="#D4AC0D">Service directory filtered by need + location + context</text>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#5B2C6F"/>
+        </marker>
+        <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#1ABC9C"/>
+        </marker>
+        <marker id="arrow-plum" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#5B2C6F"/>
+        </marker>
+        <marker id="arrow-gold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#D4AC0D"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="card" style="margin-top: 1rem;">
+    <h3>Path Map Notes</h3>
+    <ul>
+      <li><strong>Lane switching is always available.</strong> A user in the Audio Lane can tap a "read" icon to see text; a user in the Text Lane can play audio. The lanes set <em>defaults</em>, not locks.</li>
+      <li><strong>All three lanes converge at the dashboard.</strong> Post-intake, every user sees the same service directory structure &mdash; the lane only changes how content is <em>presented</em> (audio vs. text vs. bilingual).</li>
+      <li><strong>Q6 (account creation) comes after first success.</strong> By the time users see it, they've already found relevant resources. This is the "try first, configure later" principle from the onboarding research.</li>
+      <li><strong>The Helper Lane enables digital brokering.</strong> It assumes a second person may be reading the screen. Every element has English alongside Somali, and a "share this" button on every resource card.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ TAB: UX BRIEF ════════════════════════════════════════ -->
+<div id="ux" class="tab-content">
+  <h2 class="section-title">Step 3: UX/UI Considerations &mdash; Design Brief</h2>
+  <p class="section-subtitle">Hand this to any designer or developer. Based on Gap 3 (low-literacy onboarding) and Gap 5 (Somali language/literacy landscape) research findings.</p>
+
+  <div class="ux-grid">
+    <!-- Icon Standards -->
+    <div class="ux-item">
+      <h4>Icon Standards</h4>
+      <div class="rule">Every icon must be paired with a short text label (max 2 words). Icons alone fail for low-literate users.</div>
+      <div class="rule">Use universally recognizable metaphors: house (housing), briefcase (jobs), heart/cross (health), phone (call), map pin (location), speaker (audio).</div>
+      <div class="rule">Minimum tap target: 48x48px. For primary actions: 56x56px.</div>
+      <div class="rule">Icon style: filled, not outlined. High contrast against background (minimum 4.5:1 ratio).</div>
+      <div class="rule">Never use abstract icons (gear for settings, hamburger for menu) without a text label alongside.</div>
+    </div>
+
+    <!-- Audio/Visual Requirements -->
+    <div class="ux-item">
+      <h4>Audio &amp; Visual Requirements</h4>
+      <div class="rule"><strong>Audio Lane:</strong> Auto-play narration on every screen in spoken Somali. Clear "play again" button (speaker icon, always same position).</div>
+      <div class="rule"><strong>Text Lane:</strong> Audio available via tap but not auto-play. Written Somali at a 4th-grade reading level.</div>
+      <div class="rule"><strong>Helper Lane:</strong> Audio + text + bilingual labels on every screen. Persistent "show to helper" banner in English at top.</div>
+      <div class="rule">All audio clips: under 15 seconds per screen. Calm, clear Somali female voice (community-tested preference).</div>
+      <div class="rule">Visual progress indicator on every screen (e.g., "2 of 6" dots). Users must always know where they are in the flow.</div>
+    </div>
+
+    <!-- Plain Language Rules -->
+    <div class="ux-item">
+      <h4>Plain Language Rules</h4>
+      <div class="rule">Max 8 words per button label. Max 15 words per screen instruction.</div>
+      <div class="rule">No institutional jargon: "benefits" &rarr; "lacag caawin ah" (money help), "documentation" &rarr; "warqadaha" (papers), "eligibility" &rarr; "ma ku haboon tahay?" (is it right for you?).</div>
+      <div class="rule">Use concrete nouns over abstract ones: "doctor" not "healthcare provider", "bus" not "transportation".</div>
+      <div class="rule">Questions should be yes/no or single-choice whenever possible. Avoid "select all that apply" &mdash; it requires holding multiple states in working memory.</div>
+      <div class="rule">Numbers in digits, not words: "5 sano" not "shan sano".</div>
+    </div>
+
+    <!-- Error Recovery Patterns -->
+    <div class="ux-item">
+      <h4>Error Recovery Patterns</h4>
+      <div class="rule">Every error screen must show: (1) what went wrong in plain language, (2) one obvious corrective action, (3) a "go back" button. No dead-end states.</div>
+      <div class="rule">Audio Lane errors: auto-play the error message in Somali. The corrective action should be a single tap, not a text instruction.</div>
+      <div class="rule">Never use red alone to signal error &mdash; pair with an icon (triangle warning) and text. Color-only signals fail for color-blind users and are culturally ambiguous.</div>
+      <div class="rule">Form validation: inline, real-time, field-by-field. Never validate the entire form at once (users lose track of which field failed).</div>
+      <div class="rule">Timeout: save progress automatically. If a session expires, resume where the user left off, not from the beginning.</div>
+    </div>
+
+    <!-- Navigation Rules -->
+    <div class="ux-item">
+      <h4>Navigation &amp; Layout Rules</h4>
+      <div class="rule">Fixed bottom navigation bar with 4 max icons: Home, Search, Favorites, Profile. Same position on every screen.</div>
+      <div class="rule">One primary action per screen. If two actions are needed, make one visually dominant (large, colored) and one secondary (smaller, outlined).</div>
+      <div class="rule">Back button always in the same position (top-left). Label it "Dib u noqo" (Go back) with a left arrow icon.</div>
+      <div class="rule">No horizontal scrolling. No swipe gestures for critical actions (many low-digital-literacy users don't discover swipe).</div>
+      <div class="rule">Language switch toggle visible on every screen (top-right). Labeled with flag icons + "SO | EN".</div>
+    </div>
+
+    <!-- Trust & Cultural Considerations -->
+    <div class="ux-item">
+      <h4>Trust &amp; Cultural Considerations</h4>
+      <div class="rule">First screen must communicate: "This is free. This is for Somalis. No one will see your information." Audio version required.</div>
+      <div class="rule">Never ask for government ID, SSN, or legal status at any point in onboarding. These are trust-destroyers for immigrant communities.</div>
+      <div class="rule">Brand colors (plum, gold, teal) should feel warm and professional, not clinical. Avoid the "government form" aesthetic (white backgrounds, blue links, small text).</div>
+      <div class="rule">Community endorsement signals: partner logos (DEED, SNAPBI) on the landing page and "About" screen. "For Somalis, by Somalis" tagline prominent.</div>
+      <div class="rule">Privacy language: "Caawi ma keydin macluumaadkaaga" (Caawi does not store your information) &mdash; visible on any screen that asks for input.</div>
+    </div>
+  </div>
+
+  <!-- Bubble.io specific notes -->
+  <div class="card gold-border" style="margin-top: 1rem;">
+    <h3>Bubble.io Implementation Notes</h3>
+    <p>Since Caawi is built on Bubble.io, these UX requirements translate to specific Bubble conventions:</p>
+    <ul>
+      <li><strong>Audio playback:</strong> Use the Bubble HTML Audio element or the Howler.js plugin. Store audio clips as Bubble file uploads, referenced by screen ID.</li>
+      <li><strong>Conditional rendering:</strong> Use Bubble's conditional visibility to show/hide elements based on the user's lane (stored as a custom state or URL parameter from intake).</li>
+      <li><strong>Language switching:</strong> Use an Option Set for language with two entries (SO, EN). Bind all text elements to a data type that stores both translations. Toggle via a single state change.</li>
+      <li><strong>Progress indicator:</strong> Reusable element with a repeating group of dots. Current step highlighted with brand color. Placed consistently at top of every intake screen.</li>
+      <li><strong>Session persistence:</strong> Use Bubble's built-in "Current User" even for non-logged-in users (temporary user). Save intake answers to the temp user, convert to full account at Q6.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ TAB: LANDING PAGE ════════════════════════════════════════ -->
+<div id="landing" class="tab-content">
+  <h2 class="section-title">Step 4: Landing Page</h2>
+  <p class="section-subtitle">This comes last because it reflects what the platform actually does for a specific person. The copy below is calibrated to the MVP service priority (jobs-first, based on the intake logic).</p>
+
+  <div class="landing-preview">
+    <!-- Hero -->
+    <div class="lp-hero">
+      <div style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.25rem;">C<span style="color: #D4AC0D;">aa</span>wi</div>
+      <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 1.5rem; letter-spacing: 1px;">FOR SOMALIS, BY SOMALIS</p>
+      <h2>Waxaad u baahan tahay, halkan ayuu yaallaa.</h2>
+      <p class="lp-sub">What you need is right here. Find jobs, housing, health services, and community support &mdash; in Somali, at your pace, with help if you need it.</p>
+      <button class="lp-cta" onclick="alert('This would launch the Caawi intake flow')">Bilow &mdash; Start Here</button>
+      <p style="margin-top: 0.75rem; font-size: 0.78rem; opacity: 0.65;">Lacag la'aan. Bilaa diiwaangelin. &bull; Free. No sign-up required.</p>
+    </div>
+
+    <!-- Features -->
+    <div class="lp-features">
+      <div class="lp-feature">
+        <div class="lp-icon" style="background: #D5F5E3;">&#128188;</div>
+        <h4>Shaqo &mdash; Jobs</h4>
+        <p>Find open positions near you. Caawi matches jobs to your skills and location, with Somali instructions for every step of applying.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-icon" style="background: #E8DAEF;">&#127968;</div>
+        <h4>Guri &mdash; Housing</h4>
+        <p>See housing options, understand your rights as a renter, and connect to organizations that help with applications &mdash; all explained simply.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-icon" style="background: #FEF9E7;">&#9877;&#65039;</div>
+        <h4>Caafimaad &mdash; Health</h4>
+        <p>Find clinics with Somali-speaking staff, understand your insurance options, and book appointments without navigating confusing systems.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-icon" style="background: #D6EAF8;">&#129309;</div>
+        <h4>Bulsho &mdash; Community</h4>
+        <p>Connect with others who have been where you are. Ask questions, share experiences, and find local events and support groups.</p>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div style="padding: 2rem; background: var(--white);">
+      <h3 style="text-align: center; color: var(--plum); font-size: 1.15rem; margin-bottom: 1.5rem;">Sidee u shaqeysaa &mdash; How It Works</h3>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; max-width: 700px; margin: 0 auto;">
+        <div style="text-align: center; flex: 1; min-width: 150px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--plum); color: var(--gold); font-size: 1.2rem; font-weight: 800; line-height: 48px; margin: 0 auto 0.5rem;">1</div>
+          <p style="font-size: 0.85rem; font-weight: 600; color: var(--plum);">Tell us what you need</p>
+          <p style="font-size: 0.78rem; color: #7F8C8D;">Tap an icon. That's it.</p>
+        </div>
+        <div style="text-align: center; flex: 1; min-width: 150px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--plum); color: var(--gold); font-size: 1.2rem; font-weight: 800; line-height: 48px; margin: 0 auto 0.5rem;">2</div>
+          <p style="font-size: 0.85rem; font-weight: 600; color: var(--plum);">Choose how you want help</p>
+          <p style="font-size: 0.78rem; color: #7F8C8D;">Listen, read, or get help from someone nearby.</p>
+        </div>
+        <div style="text-align: center; flex: 1; min-width: 150px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--plum); color: var(--gold); font-size: 1.2rem; font-weight: 800; line-height: 48px; margin: 0 auto 0.5rem;">3</div>
+          <p style="font-size: 0.85rem; font-weight: 600; color: var(--plum);">See what's near you</p>
+          <p style="font-size: 0.78rem; color: #7F8C8D;">Real services. Your area. In Somali.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust -->
+    <div class="lp-trust">
+      <h3>Amaantaada waa nabad &mdash; Your privacy is safe</h3>
+      <p>Caawi does not ask for your ID, your papers, or your legal status. We do not share your information with anyone. This platform exists to help you navigate systems that were not built for you &mdash; until now.</p>
+      <div style="margin-top: 1.25rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; opacity: 0.6;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">DEED</span>
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">SNAPBI</span>
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Sahan Journal</span>
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">UST</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="lp-footer">
+      &copy; 2026 Caawi &bull; For Somalis, by Somalis &bull; Minneapolis, MN<br>
+      <span style="opacity: 0.6; font-size: 0.72rem;">Built by Isra Ali &bull; Powered by community</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 1.5rem;">
+    <h3>Landing Page Rationale</h3>
+    <ul>
+      <li><strong>Bilingual hero text</strong> &mdash; Somali headline first, English beneath. Signals "this is for you" before anything else.</li>
+      <li><strong>"Start Here" not "Sign Up"</strong> &mdash; deferred account creation. Users enter the intake flow immediately, no registration gate.</li>
+      <li><strong>"Free. No sign-up required."</strong> in both languages &mdash; addresses the two biggest trust barriers for immigrant users: cost and data collection.</li>
+      <li><strong>Four service categories match the intake Q2 options</strong> &mdash; what you see on the landing page is exactly what you'll be asked in the intake. No surprise scope.</li>
+      <li><strong>"How It Works" in 3 steps</strong> &mdash; mirrors the actual intake flow (need &rarr; mode &rarr; results). Keeps it concrete.</li>
+      <li><strong>Privacy section uses plain language</strong> &mdash; "We do not ask for your ID" is more powerful than "Your data is encrypted with AES-256."</li>
+      <li><strong>Partner logos build institutional trust</strong> &mdash; DEED, SNAPBI, Sahan Journal, UST are recognizable anchors for the Somali-MN community.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ JAVASCRIPT ════════════════════════════════════════ -->
+<script>
+function showTab(tabId) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  // Show selected tab
+  document.getElementById(tabId).classList.add('active');
+
+  // Highlight button
+  const buttons = document.querySelectorAll('.tab-btn');
+  const tabMap = ['research', 'intake', 'paths', 'ux', 'landing'];
+  const idx = tabMap.indexOf(tabId);
+  if (idx >= 0) buttons[idx].classList.add('active');
+}
+</script>
+
+</body>
+</html>

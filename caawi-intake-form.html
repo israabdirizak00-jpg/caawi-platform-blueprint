@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caawi Platform – Intake Form</title>
+<style>
+  :root {
+    --plum: #5B2C6F;
+    --violet: #7D3C98;
+    --gold: #D4AC0D;
+    --teal: #1ABC9C;
+    --teal-dark: #148F77;
+    --cream: #FDF6EC;
+    --slate: #2C3E50;
+    --light-gray: #F4F6F7;
+    --mid-gray: #BDC3C7;
+    --white: #FFFFFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--light-gray);
+    color: var(--slate);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, var(--plum) 0%, var(--violet) 100%);
+    color: var(--white);
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.25rem;
+  }
+
+  .header .gold-accent { color: var(--gold); }
+  .header p { opacity: 0.85; font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #E8DAEF;
+    margin-top: 1rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    transition: width 0.3s ease;
+  }
+
+  /* ── Container ── */
+  .container {
+    flex: 1;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    width: 100%;
+  }
+
+  /* ── Screen ── */
+  .screen {
+    display: none;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow-lg);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0.8; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Screen Title ── */
+  .screen-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--plum);
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+
+  .screen-subtitle {
+    font-size: 0.85rem;
+    color: #7F8C8D;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Buttons ── */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .btn {
+    padding: 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 60px;
+    text-align: center;
+  }
+
+  .btn-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .btn-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--teal);
+    color: var(--white);
+    border-color: var(--teal);
+  }
+
+  .btn-primary:hover {
+    background: var(--teal-dark);
+    border-color: var(--teal-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--cream);
+    color: var(--plum);
+    border-color: var(--plum);
+  }
+
+  .btn-secondary:hover {
+    background: var(--plum);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(91, 44, 111, 0.2);
+  }
+
+  .btn-gold {
+    background: #FEF9E7;
+    color: #9A7D0A;
+    border-color: var(--gold);
+  }
+
+  .btn-gold:hover {
+    background: var(--gold);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 172, 13, 0.2);
+  }
+
+  .btn-red {
+    background: #FDEDEC;
+    color: #922B21;
+    border-color: #922B21;
+  }
+
+  .btn-red:hover {
+    background: #922B21;
+    color: var(--white);
+    transform: translateY(-2px);
+  }
+
+  /* ── Input Fields ── */
+  .form-group {
+    margin: 1.5rem 0;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--plum);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--mid-gray);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+  }
+
+  /* ── Audio Button ── */
+  .audio-btn {
+    background: #E8F8F5;
+    border: 2px solid var(--teal);
+    color: var(--teal);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .audio-btn:hover {
+    background: var(--teal);
+    color: var(--white);
+  }
+
+  /* ── Navigation ── */
+  .nav-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: space-between;
+  }
+
+  .btn-back,
+  .btn-next {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-back {
+    background: var(--light-gray);
+    color: var(--slate);
+    border: 2px solid var(--mid-gray);
+  }
+
+  .btn-back:hover {
+    background: var(--mid-gray);
+    color: var(--white);
+  }
+
+  .btn-next {
+    background: var(--teal);
+    color: var(--white);
+    flex: 1;
+    margin-left: auto;
+  }
+
+  .btn-next:hover {
+    background: var(--teal-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+  }
+
+  .btn-next:disabled {
+    background: var(--mid-gray);
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── Summary ── */
+  .summary {
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .summary h3 {
+    color: var(--plum);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #E8DAEF;
+  }
+
+  .summary-item:last-child {
+    border-bottom: none;
+  }
+
+  .summary-label {
+    color: #7F8C8D;
+    font-weight: 500;
+  }
+
+  .summary-value {
+    color: var(--plum);
+    font-weight: 600;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 1.6rem; }
+    .container { margin: 1rem auto; padding: 0 0.75rem; }
+    .screen { padding: 1.5rem 1.25rem; }
+    .btn { padding: 1.25rem; min-height: 55px; font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ HEADER ════════════════════════════════════════ -->
+<div class="header">
+  <h1>C<span class="gold-accent">aa</span>wi Platform</h1>
+  <p>Welcome – Let's get you connected to the services you need</p>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ MAIN CONTAINER ════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- ── SCREEN 1: Language Selection ── -->
+  <div id="screen1" class="screen active">
+    <h2 class="screen-title">Luuqaddaada Dooro</h2>
+    <p class="screen-subtitle">Choose your language</p>
+
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="selectLanguage('somali')">
+        <span class="btn-icon">🇸🇴</span>
+        <span class="btn-text">Soomaali</span>
+      </button>
+      <button class="btn btn-secondary" onclick="selectLanguage('english')">
+        <span class="btn-icon">🇺🇸</span>
+        <span class="btn-text">English</span>
+      </button>
+      <button class="btn btn-gold" onclick="playAudio()">
+        <span class="btn-icon">🔊</span>
+        <span class="btn-text">Play Audio First</span>
+      </button>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-next" onclick="nextScreen()" id="screen1-next">Continue</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 2: What Brings You Here ── -->
+  <div id="screen2" class="screen">
+    <h2 class="screen-title">Maxaad Raadinaysaa?</h2>
+    <p class="screen-subtitle">What are you looking for?</p>
+
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="selectNeed('jobs')">
+        <span class="btn-icon">💼</span>
+        <span class="btn-text">Jobs / Shaqo</span>
+      </button>
+      <button class="btn btn-secondary" onclick="selectNeed('housing')">
+        <span class="btn-icon">🏠</span>
+        <span class="btn-text">Housing / Guri</span>
+      </button>
+      <button class="btn btn-gold" onclick="selectNeed('health')">
+        <span class="btn-icon">⚕️</span>
+        <span class="btn-text">Health / Caafimaad</span>
+      </button>
+      <button class="btn btn-red" onclick="selectNeed('other')">
+        <span class="btn-icon">📋</span>
+        <span class="btn-text">Other / Wax Kale</span>
+      </button>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevScreen()">Back</button>
+      <button class="btn-next" onclick="nextScreen()" id="screen2-next" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 3: Preference for Information ── -->
+  <div id="screen3" class="screen">
+    <h2 class="screen-title">Sidee U Jeceshahay?</h2>
+    <p class="screen-subtitle">How do you prefer to get information?</p>
+
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="selectPreference('listen')">
+        <span class="btn-icon">🔊</span>
+        <span class="btn-text">Listen / Dhageysi</span>
+      </button>
+      <button class="btn btn-secondary" onclick="selectPreference('read')">
+        <span class="btn-icon">📖</span>
+        <span class="btn-text">Read / Akhris</span>
+      </button>
+      <button class="btn btn-gold" onclick="selectPreference('helper')">
+        <span class="btn-icon">👥</span>
+        <span class="btn-text">With Help / Caawin</span>
+      </button>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevScreen()">Back</button>
+      <button class="btn-next" onclick="nextScreen()" id="screen3-next" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 4: Location ── -->
+  <div id="screen4" class="screen">
+    <h2 class="screen-title">Xaggee Ku Nooshahay?</h2>
+    <p class="screen-subtitle">Where are you located?</p>
+
+    <div class="form-group">
+      <label for="city">Select your city or enter location</label>
+      <select id="city" onchange="enableNext()">
+        <option value="">-- Choose a city --</option>
+        <option value="Minneapolis">Minneapolis / Miniyaapolis</option>
+        <option value="St. Paul">St. Paul / Sanduud Powl</option>
+        <option value="Bloomington">Bloomington</option>
+        <option value="Plymouth">Plymouth</option>
+        <option value="Eden Prairie">Eden Prairie</option>
+        <option value="Other">Other Minnesota City</option>
+      </select>
+    </div>
+
+    <button class="audio-btn" onclick="playLocationAudio()">
+      <span>🎤</span> Say your city name
+    </button>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevScreen()">Back</button>
+      <button class="btn-next" onclick="nextScreen()" id="screen4-next" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 5: Contact Information ── -->
+  <div id="screen5" class="screen">
+    <h2 class="screen-title">Magacaaga</h2>
+    <p class="screen-subtitle">What should we call you?</p>
+
+    <div class="form-group">
+      <label for="name">Your name</label>
+      <input type="text" id="name" placeholder="Enter your name" onchange="enableNext()">
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Your phone number (optional)</label>
+      <input type="tel" id="phone" placeholder="(555) 000-0000">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Your email (optional)</label>
+      <input type="email" id="email" placeholder="email@example.com">
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevScreen()">Back</button>
+      <button class="btn-next" onclick="nextScreen()" id="screen5-next" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 6: Summary & Submit ── -->
+  <div id="screen6" class="screen">
+    <h2 class="screen-title">Habka Ugu Dhow ✓</h2>
+    <p class="screen-subtitle">Review your answers</p>
+
+    <div class="summary">
+      <h3>Your Intake Summary</h3>
+      <div class="summary-item">
+        <span class="summary-label">Language:</span>
+        <span class="summary-value" id="summary-language">—</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Primary Need:</span>
+        <span class="summary-value" id="summary-need">—</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Preferred Way to Get Info:</span>
+        <span class="summary-value" id="summary-preference">—</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Location:</span>
+        <span class="summary-value" id="summary-location">—</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Name:</span>
+        <span class="summary-value" id="summary-name">—</span>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevScreen()">Back</button>
+      <button class="btn-next" onclick="submitForm()" style="background: var(--gold); color: var(--plum);">Submit & Get Connected</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════ JAVASCRIPT ════════════════════════════════════════ -->
+<script>
+// Form State
+const formState = {
+  language: null,
+  need: null,
+  preference: null,
+  location: null,
+  name: null,
+  phone: null,
+  email: null
+};
+
+let currentScreen = 1;
+const totalScreens = 6;
+
+// Navigation
+function showScreen(screenNum) {
+  // Hide all screens
+  for (let i = 1; i <= totalScreens; i++) {
+    const screen = document.getElementById(`screen${i}`);
+    if (screen) screen.classList.remove('active');
+  }
+  // Show current screen
+  const screen = document.getElementById(`screen${screenNum}`);
+  if (screen) screen.classList.add('active');
+
+  // Update progress bar
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+function updateProgress() {
+  const progress = (currentScreen / totalScreens) * 100;
+  document.getElementById('progressFill').style.width = progress + '%';
+}
+
+function nextScreen() {
+  if (currentScreen < totalScreens) {
+    currentScreen++;
+    showScreen(currentScreen);
+    
+    // Populate summary on final screen
+    if (currentScreen === 6) {
+      populateSummary();
+    }
+  }
+}
+
+function prevScreen() {
+  if (currentScreen > 1) {
+    currentScreen--;
+    showScreen(currentScreen);
+  }
+}
+
+// Screen 1: Language Selection
+function selectLanguage(lang) {
+  formState.language = lang === 'somali' ? 'Somali (Soomaali)' : 'English';
+  document.getElementById('screen1-next').style.background = 'var(--teal)';
+  document.getElementById('screen1-next').disabled = false;
+}
+
+function playAudio() {
+  const utterance = new SpeechSynthesisUtterance('Luuqaddaada dooro. Choose your language.');
+  utterance.lang = 'en-US';
+  window.speechSynthesis.speak(utterance);
+  selectLanguage('somali');
+}
+
+// Screen 2: Primary Need
+function selectNeed(need) {
+  const needMap = {
+    'jobs': 'Jobs (Shaqo)',
+    'housing': 'Housing (Guri)',
+    'health': 'Health (Caafimaad)',
+    'other': 'Other Services'
+  };
+  formState.need = needMap[need];
+  document.getElementById('screen2-next').disabled = false;
+}
+
+// Screen 3: Preference
+function selectPreference(pref) {
+  const prefMap = {
+    'listen': 'Audio / Listen (Dhageysi)',
+    'read': 'Text / Read (Akhris)',
+    'helper': 'With Helper (Caawin)'
+  };
+  formState.preference = prefMap[pref];
+  document.getElementById('screen3-next').disabled = false;
+}
+
+// Screen 4: Location
+function enableNext() {
+  const city = document.getElementById('city').value;
+  if (city) {
+    formState.location = city;
+    document.getElementById('screen4-next').disabled = false;
+  } else {
+    document.getElementById('screen4-next').disabled = true;
+  }
+}
+
+function playLocationAudio() {
+  const utterance = new SpeechSynthesisUtterance('Say the name of your city.');
+  utterance.lang = 'en-US';
+  window.speechSynthesis.speak(utterance);
+}
+
+// Screen 5: Contact Info
+function enableNext() {
+  const name = document.getElementById('name').value.trim();
+  if (name) {
+    formState.name = name;
+    formState.phone = document.getElementById('phone').value;
+    formState.email = document.getElementById('email').value;
+    document.getElementById('screen5-next').disabled = false;
+  } else {
+    document.getElementById('screen5-next').disabled = true;
+  }
+}
+
+// Screen 6: Summary
+function populateSummary() {
+  document.getElementById('summary-language').textContent = formState.language || '—';
+  document.getElementById('summary-need').textContent = formState.need || '—';
+  document.getElementById('summary-preference').textContent = formState.preference || '—';
+  document.getElementById('summary-location').textContent = formState.location || '—';
+  document.getElementById('summary-name').textContent = formState.name || '—';
+}
+
+// Submit
+function submitForm() {
+  console.log('Form submitted:', formState);
+  alert(
+    `✓ Thank you, ${formState.name}!\n\n` +
+    `We're connecting you to ${formState.need.split(' ')[0].toLowerCase()} resources in ${formState.location}.\n\n` +
+    `Your preferred way to receive info: ${formState.preference}\n\n` +
+    `You'll see services tailored to your needs on the next screen.`
+  );
+  // In a real app, this would send data to a backend and redirect to the main service page
+}
+
+// Initialize
+showScreen(1);
+updateProgress();
+</script>
+
+</body>
+</html>
